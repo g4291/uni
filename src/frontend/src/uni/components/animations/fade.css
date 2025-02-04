@@ -1,0 +1,9 @@
+/* Fade.css */
+.uni-fade {
+    opacity: 0;
+    transition: opacity var(--uni-animation-fade-duration, 500ms) ease-in-out;
+}
+
+.uni-fade.show {
+    opacity: 1;
+}

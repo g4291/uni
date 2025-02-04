@@ -1,0 +1,6 @@
+body {
+  margin: 0;
+  scrollbar-color: rgba(var(--joy-palette-neutral-mainChannel, 99 107 116) / 0.2) transparent;
+  top: 0;
+  bottom: 0;
+}
