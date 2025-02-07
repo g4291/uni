@@ -11,7 +11,7 @@ import UniCard from "./primitives/card";
 import UniGrid from "./primitives/grid";
 import { fileSize } from "../utils";
 import { cropString } from "../../utils";
-import UniCipyContentButton from "./copy-content";
+import UniCopyContentButton from "./copy-content";
 import UniStack from "./primitives/stack";
 import UniDeleteEntityWithConfirmButton from "./entity/delete-entity-button";
 import UniDivider from "./primitives/divider";
@@ -269,7 +269,7 @@ export function UniPhotoCard(props: IUniPhotoCardProps): JSX.Element {
                     <UniStack.Row fullHeight>
                         <UT.Text xs>{t("link")}: {cropString(link, 100)}</UT.Text>
                         <UniBox.VHC fullHeight>
-                            <UT.Text xs><UniCipyContentButton content={link} /></UT.Text>
+                            <UT.Text xs><UniCopyContentButton content={link} /></UT.Text>
                         </UniBox.VHC>
 
                     </UniStack.Row>

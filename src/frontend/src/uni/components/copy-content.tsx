@@ -15,7 +15,7 @@ interface IUniCopyContentButtonProps {
 
 
 /**
- * UniCipyContentButton is a React functional component that renders a button
+ * UniCopyContentButton is a React functional component that renders a button
  * which copies provided content to the clipboard when clicked. The button is 
  * wrapped in a tooltip displaying a translation for "copy".
  *
@@ -25,7 +25,7 @@ interface IUniCopyContentButtonProps {
  * 
  * @returns {JSX.Element} The rendered component.
  */
-export default function UniCipyContentButton(props: IUniCopyContentButtonProps): JSX.Element {
+export default function UniCopyContentButton(props: IUniCopyContentButtonProps): JSX.Element {
 
     const t = useUniTranslator()
     return <UniTooltip title={t("copy")} arrow>

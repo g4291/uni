@@ -22,7 +22,7 @@ import UniDivider from "../../uni/components/primitives/divider";
 import UniDeleteEntityWithConfirmButton from "../../uni/components/entity/delete-entity-button";
 import useUniEntityFiles from "../../uni/api/hooks/entity-files";
 import { UniFile } from "../../uni/datamodel";
-import UniCipyContentButton from "../../uni/components/copy-content";
+import UniCopyContentButton from "../../uni/components/copy-content";
 import { IUniUser } from "../../uni/api/common";
 import UniIcons from "../../uni/icons";
 import UniTooltip from "../../uni/components/primitives/tooltip";
@@ -62,7 +62,7 @@ function UserDetailSummary(props: IUserDetailSummaryProps) {
                                         value={entity.buffer.first_name}
                                         disabled
                                     /></UniBox.Box>
-                                    <UniBox.VHC><UniCipyContentButton content={entity.buffer.first_name} /></UniBox.VHC>
+                                    <UniBox.VHC><UniCopyContentButton content={entity.buffer.first_name} /></UniBox.VHC>
                                 </UniStack.Row>
                                 <UniStack.Row spacing={1}>
                                     <UniBox.Box fullWidth><UniInput
@@ -72,7 +72,7 @@ function UserDetailSummary(props: IUserDetailSummaryProps) {
                                         value={entity.buffer.last_name}
                                         disabled
                                     /></UniBox.Box>
-                                    <UniBox.VHC><UniCipyContentButton content={entity.buffer.last_name} /></UniBox.VHC>
+                                    <UniBox.VHC><UniCopyContentButton content={entity.buffer.last_name} /></UniBox.VHC>
                                 </UniStack.Row>
                                 <UniStack.Row spacing={1}>
                                     <UniBox.Box fullWidth><UniInput
@@ -82,7 +82,7 @@ function UserDetailSummary(props: IUserDetailSummaryProps) {
                                         value={entity.buffer.email}
                                         disabled
                                     /></UniBox.Box>
-                                    <UniBox.VHC><UniCipyContentButton content={entity.buffer.email} /></UniBox.VHC>
+                                    <UniBox.VHC><UniCopyContentButton content={entity.buffer.email} /></UniBox.VHC>
                                 </UniStack.Row>
                                 <UniStack.Row spacing={1}>
                                     <UniBox.Box fullWidth><UniInput
@@ -92,7 +92,7 @@ function UserDetailSummary(props: IUserDetailSummaryProps) {
                                         value={t(entity.buffer.root ? "true" : "false")}
                                         disabled
                                     /></UniBox.Box>
-                                    <UniBox.VHC><UniCipyContentButton content={entity.buffer.email} /></UniBox.VHC>
+                                    <UniBox.VHC><UniCopyContentButton content={entity.buffer.email} /></UniBox.VHC>
                                 </UniStack.Row>
                             </UniStack.Column>
                         </UniCard>
@@ -119,7 +119,7 @@ function UserDetailSummary(props: IUserDetailSummaryProps) {
                                 maxRows={8}
                                 fullWidth
                             />
-                            <UniBox.HR fullWidth><UniCipyContentButton content={entity?.buffer.note || ""} /></UniBox.HR>
+                            <UniBox.HR fullWidth><UniCopyContentButton content={entity?.buffer.note || ""} /></UniBox.HR>
                         </UniCard>
                     </UniGrid.Item>
                 </UniGrid.Container>
