@@ -593,7 +593,8 @@ class SQLiteDatabase(Database):
         table = self._table(record) 
         cols = self.builder.get_columns(record)
         sql, values = self.builder.update(table, cols)
-        self._sql(sql, values)
+        if self._sql(sql, values).rowcount == 0:
+            return None 
 
         return record.id
 
