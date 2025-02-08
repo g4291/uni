@@ -9,7 +9,7 @@ import { getUniColor, getUniVariant, IUniWithBorderProps, IUniWithChildrenProps,
 const UNI_MODAL_DIALOG_CONFIG = {
     defaultSpacing: 1,
     defaultModalDialogContentSx: {
-        p:0,
+        p: 0,
         scrollbarWidth: "thin"
     },
     defaultModalDialogTitleSx: {
@@ -37,6 +37,7 @@ export interface IModalDialogProps extends IUniWithChildrenProps, IUniWithSXProp
     bodySx?: SxProps
 
     close?: boolean
+    fullscreen?: boolean
 }
 
 
@@ -60,7 +61,7 @@ function UniModalDialog(props: IModalDialogProps): JSX.Element {
                 if (props.onClose) props.onClose()
             }}
         >
-            <ModalDialog sx={props.bodySx}  color={color} variant={variant} size={size}>
+            <ModalDialog sx={props.bodySx} color={color} variant={variant} size={size} layout={props.fullscreen ? "fullscreen" : "center"}>
                 {props.close && <ModalClose />}
                 {props.title ? <DialogTitle sx={titleSx}>{props.title}</DialogTitle> : props.close && <DialogTitle sx={titleSx}>&nbsp;</DialogTitle>}
                 <DialogContent sx={{ ...UNI_MODAL_DIALOG_CONFIG.defaultModalDialogContentSx, ...props.sx } as SxProps}>
@@ -68,7 +69,7 @@ function UniModalDialog(props: IModalDialogProps): JSX.Element {
                 </DialogContent>
                 {props.actions && <DialogActions>
                     {props.actions}
-                </DialogActions> }
+                </DialogActions>}
             </ModalDialog>
         </Modal>
     )

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { Snackbar } from "@mui/joy";
+import { Snackbar, SnackbarOrigin } from "@mui/joy";
 import { SxProps } from "@mui/joy/styles/types";
 
 import { getUniVariant, IUniToast, IUniWithSizeProps, IUniWithSXProps, IUniWithVariantProps, UniAlertSeverity, UniVariantProp } from "../common";
@@ -24,6 +24,7 @@ export const UNI_TOASTER_CONFIG = {
     defaultDuration: 6000
 
 
+
 } as {
     defaultSx: SxProps,
     defaultVariant: UniVariantProp
@@ -34,6 +35,7 @@ export const UNI_TOASTER_CONFIG = {
 
 interface IUniToasterProps extends IUniWithSXProps, IUniWithVariantProps, IUniWithSizeProps {
     duration?: number
+    anchorOrigin?: SnackbarOrigin
 }
 
 /**
@@ -115,6 +117,7 @@ export default function UniToaster(props: IUniToasterProps): JSX.Element {
                 endDecorator={endDecorator}
                 variant={variant}
                 color={color}
+                anchorOrigin={props.anchorOrigin}
                 onClose={(e, reason) => {
                     // if (reason === "clickaway" || reason === "escapeKeyDown") return
                     clear()

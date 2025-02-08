@@ -48,7 +48,7 @@ export function useUniScheduler(task: () => void, interval: number = 5000, suspe
         return clear;
         
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [suspended]);
+    }, [suspended, interval]);
 };
 
 export default useUniScheduler;

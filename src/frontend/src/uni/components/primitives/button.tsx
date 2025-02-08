@@ -11,13 +11,15 @@ export const UNI_BUTTON_CONFIG = {
     },
     defaultVariant: "solid",
     defaultColor: "neutral",
-    defaultUppercase: false
+    defaultUppercase: false,
+    defaultSmall: false,
 } as {
     defaultMargin: string | number,
     defaultSx: SxProps,
     defaultVariant: UniVariantProp,
     defaultColor: UniColorProp,
-    defaultUppercase: boolean
+    defaultUppercase: boolean,
+    defaultSmall: boolean,
 }
 
 // props
@@ -43,6 +45,7 @@ export function UniButton(props: IUniButtonProps): JSX.Element {
     const { sx, children, onClick, small, large } = props;
 
     const size = small ? "sm" : large ? "lg" : undefined;
+    const _size = size === undefined ? (UNI_BUTTON_CONFIG.defaultSmall ? "sm" : undefined) : size
     const variant = React.useMemo(() => getUniVariant(props, UNI_BUTTON_CONFIG.defaultVariant), [props])
     const color = React.useMemo(() => getUniColor(props, UNI_BUTTON_CONFIG.defaultColor), [props])
 
@@ -60,7 +63,7 @@ export function UniButton(props: IUniButtonProps): JSX.Element {
         fullWidth={props.fullWidth}
         type={props.submit ? "submit" : undefined}
 
-        variant={variant} size={size} onClick={(e) => {
+        variant={variant} size={_size} onClick={(e) => {
             if (onClick) {
                 onClick(e)
             }

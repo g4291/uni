@@ -14,6 +14,8 @@ import UniSelect, { UniSelectOption } from "./primitives/select";
 import useUniBreakPoint from "../hooks/breakpoint";
 import UniTooltip from "./primitives/tooltip";
 import UniDivider from "./primitives/divider";
+import { UniDatabaseModel } from "../datamodel";
+import { datetimeStrFromTimestamp } from "../../utils";
 
 
 export const UNI_DATA_GRID_CONFIG = {
@@ -226,4 +228,61 @@ export default function UniDataGrid<T>(props: IUniDataGridProps<T>): JSX.Element
             </UniBox.Box>
         </UniCard>
     </>
+}
+
+export function uniGridColumntNo<T extends UniDatabaseModel>(xs?: boolean): UniDataGridColDef<T> {
+    return {
+        name: "no.",
+        width: 150,
+        renderCell: (e) => {
+            return <UT.Text xs>{e.seq}</UT.Text>
+        },
+        sortKey: "seq"
+    }
+}
+
+export function uniGridColumntName<T extends { name: string }>(xs?: boolean): UniDataGridColDef<T> {
+    return {
+        name: "name",
+        width: 250,
+        renderCell: (e) => {
+            return <UT.Text xs>{e.name}</UT.Text>
+        },
+        sortKey: "name"
+    }
+}
+
+export function uniGridColumntNote<T extends UniDatabaseModel>(xs?: boolean): UniDataGridColDef<T> {
+    return {
+        name: "note",
+        width: 200,
+        renderCell: (e) => {
+            return <UT.Text xs>{e.note}</UT.Text>
+        },
+        sortKey: "note"
+    }
+}
+
+export function uniGridColumnCreated<T extends UniDatabaseModel>(xs?: boolean): UniDataGridColDef<T> {
+    return {
+        name: "created",
+        width: 200,
+        renderCell: (e) => {
+            if (!e.created.timestamp) return <></>
+            return <UT.Text xs>{datetimeStrFromTimestamp(e.created.timestamp)}</UT.Text>
+        },
+        sortKey: "created.timestamp"
+    }
+}
+
+export function uniGridColumnUpdated<T extends UniDatabaseModel>(xs?: boolean): UniDataGridColDef<T> {
+    return {
+        name: "updated",
+        width: 200,
+        renderCell: (e) => {
+            if (!e.created.timestamp) return <></>
+            return <UT.Text xs={xs}>{datetimeStrFromTimestamp(e.created.timestamp)}</UT.Text>
+        },
+        sortKey: "updated.timestamp"
+    }
 }

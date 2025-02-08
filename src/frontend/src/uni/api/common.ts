@@ -62,3 +62,12 @@ export interface IUniStreamChunk {
     timestamp: number
     error: IUniError | null
 }
+
+export interface IUniBackgroundTaskInfo {
+    id: string
+    custom_id: string
+    finished: boolean
+    exception_type: string
+    exception_detail: string
+    progress: number
+}

@@ -29,7 +29,7 @@ export default function UniCopyContentButton(props: IUniCopyContentButtonProps):
 
     const t = useUniTranslator()
     return <UniTooltip title={t("copy")} arrow>
-        <div>
+        <div style={{width: "fit-content"}}>
             <UniStack.Row spacing={1} sx={{alignItems: "center"}}>
                 {props.title}
                 <UniButton small plain onClick={(e) => {

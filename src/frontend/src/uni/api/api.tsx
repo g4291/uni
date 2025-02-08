@@ -4,13 +4,13 @@ import { LinearProgress } from '@mui/joy';
 
 import { IUniWithChildrenProps } from '../common';
 import useUniLocalStorage from '../hooks/local-storage';
-import { IUniToken, IUniUser } from './common';
+import { IUniBackgroundTaskInfo, IUniToken, IUniUser } from './common';
 import useProcessTracker, { IUniProcessTracker } from './hooks/processes';
 import UniFade from '../components/animations/fade';
 import { UniApiUtils } from './utils';
 
 // config
-const UNI_API_CONFIG = {
+export const UNI_API_CONFIG = {
     tokenStorageKey: "uni.token",
     defaultRequireAuth: false,
     loaderZIndex: 1000,
@@ -37,6 +37,10 @@ export interface IUniApiContext {
     }
     googleClientId?: string
     processTracker: IUniProcessTracker
+    backgroundTasks: {
+        data: IUniBackgroundTaskInfo[]
+        reload: () => void
+    }
 
 }
 export const UniApiContext = React.createContext<IUniApiContext>({} as IUniApiContext);
@@ -53,10 +57,30 @@ function UniApiProvider(props: IUniApiProviderProps) {
     const [serverUrl] = React.useState(props.serverUrl);
     const [user, setUser] = React.useState<IUniUser | null>(null)
     const processTracker = useProcessTracker()
+    const [backgroundTasks, setBackgroundTasks] = React.useState<IUniBackgroundTaskInfo[]>([])
 
     const logout = () => {
         setToken(null)
         setUser(null)
+    }
+
+    const reloadBackgroundTasks = () => {
+        if(token) {
+            // const processId = processTracker.startProcess()
+            UniApiUtils.post(serverUrl+"/background_tasks/get_all", {}, token).then(
+                (r: IUniBackgroundTaskInfo[]) => {
+                    setBackgroundTasks(r)
+                    // processTracker.endProcess(processId)
+                },
+                (e) => {
+                    UniApiUtils.uniErrorHandler(e, (e) => {
+                        console.log("bg task error", e)
+                    })
+                }
+            )
+            return
+        }
+        setBackgroundTasks([])
     }
 
     const reloadUser = () => {
@@ -81,6 +105,7 @@ function UniApiProvider(props: IUniApiProviderProps) {
 
     React.useEffect(() => {
         reloadUser()
+        reloadBackgroundTasks()
 
         // eslint-disable-next-line
     }, [token])
@@ -110,7 +135,11 @@ function UniApiProvider(props: IUniApiProviderProps) {
                 reload: reloadUser
             },
             googleClientId: props.googleClientId,
-            processTracker: processTracker
+            processTracker: processTracker,
+            backgroundTasks: {
+                data: backgroundTasks,
+                reload: reloadBackgroundTasks
+            }
         }}>
             {showChild ? props.children : (props.noAuthComponent ? props.noAuthComponent : "unauthorized")}
         </UniApiContext.Provider>
