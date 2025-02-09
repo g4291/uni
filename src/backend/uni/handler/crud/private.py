@@ -123,6 +123,7 @@ def update_handler_factory(
             # update entity
             updated_data = entity.dict(exclude_unset=True)
             _entity = stored_entity.copy(update=updated_data)
+            _entity = _entity.parse_obj(_entity)
             _entity.updated.timestamp = timestamp_factory()
             _entity.updated.user_id = self.user.id
 

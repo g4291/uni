@@ -89,7 +89,10 @@ def update_handler_factory(
                 raise NotFoundError(msg)
 
             # update entity
-            _entity = stored_entity.update(entity)
+            updated_data = entity.dict(exclude_unset=True)
+            _entity = stored_entity.copy(update=updated_data)
+            _entity = _entity.parse_obj(_entity)
+            _entity.updated.timestamp = timestamp_factory()
 
             EventPreUpdate(_entity).publish()
             r = self.database.update(_entity)
