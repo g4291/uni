@@ -230,34 +230,34 @@ export default function UniDataGrid<T>(props: IUniDataGridProps<T>): JSX.Element
     </>
 }
 
-export function uniGridColumntNo<T extends UniDatabaseModel>(xs?: boolean): UniDataGridColDef<T> {
+export function uniGridColumnNo<T extends UniDatabaseModel>(xs?: boolean): UniDataGridColDef<T> {
     return {
         name: "no.",
         width: 150,
         renderCell: (e) => {
-            return <UT.Text xs>{e.seq}</UT.Text>
+            return <UT.Text xs={xs}>{e.seq}</UT.Text>
         },
         sortKey: "seq"
     }
 }
 
-export function uniGridColumntName<T extends { name: string }>(xs?: boolean): UniDataGridColDef<T> {
+export function uniGridColumnName<T extends { name: string }>(xs?: boolean): UniDataGridColDef<T> {
     return {
         name: "name",
         width: 250,
         renderCell: (e) => {
-            return <UT.Text xs>{e.name}</UT.Text>
+            return <UT.Text xs={xs}>{e.name}</UT.Text>
         },
         sortKey: "name"
     }
 }
 
-export function uniGridColumntNote<T extends UniDatabaseModel>(xs?: boolean): UniDataGridColDef<T> {
+export function uniGridColumnNote<T extends UniDatabaseModel>(xs?: boolean): UniDataGridColDef<T> {
     return {
         name: "note",
         width: 200,
         renderCell: (e) => {
-            return <UT.Text xs>{e.note}</UT.Text>
+            return <UT.Text xs={xs}>{e.note}</UT.Text>
         },
         sortKey: "note"
     }
@@ -269,7 +269,7 @@ export function uniGridColumnCreated<T extends UniDatabaseModel>(xs?: boolean): 
         width: 200,
         renderCell: (e) => {
             if (!e.created.timestamp) return <></>
-            return <UT.Text xs>{datetimeStrFromTimestamp(e.created.timestamp)}</UT.Text>
+            return <UT.Text xs={xs}>{datetimeStrFromTimestamp(e.created.timestamp)}</UT.Text>
         },
         sortKey: "created.timestamp"
     }
