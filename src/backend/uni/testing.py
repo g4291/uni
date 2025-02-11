@@ -5,20 +5,22 @@ uni.testing
 
 """
 from __future__ import annotations
+import json
 from typing import Any, Tuple, Dict
 
 from fastapi import Response
 from fastapi.testclient import TestClient
 from init import init
 from uni.default import UniDefault
+from uni.encoders import UniJsonEncoder
 from uni.utils import password_hash
 from uni.version import API_PREFIX
 from .application import UniBackend
-from .database import database_factory
+from .database import database_factory, Database
 from .exceptions import TestError
 from .modules.user.model import db_User
 from .config import ApplicationConfig
-from .logger import color_green, core_logger, set_logging_dev, set_logging_production
+from .logger import color_green, color_magenta, color_yellow, core_logger, set_logging_dev, set_logging_production
 from .config import Config
 
 
@@ -39,6 +41,13 @@ class AppTesting(UniDefault):
         self._user = None
         self._create_test_user()
         self._auth()
+
+    @property
+    def database(self) -> Database:
+        """
+        Retrieves the current database connection.
+        """
+        return self._db
 
     def __enter__(self) -> AppTesting:
         """
@@ -132,7 +141,12 @@ class AppTesting(UniDefault):
         Returns:
             Response: The response object from the POST request.
         """
-        return self._client.post(prefix+endpoint, json=data, headers={"token": self._token})
+
+        # serialize -> deserialize to ensure that the data is JSON serializable (e.g., UUID)
+        _json = json.loads(
+            json.dumps(data, cls=UniJsonEncoder)
+        )
+        return self._client.post(prefix+endpoint, json=_json, headers={"token": self._token})
 
     @staticmethod
     def basic(test_name: str, config_path: str = "config_test.json", debug: bool = False) -> Config:
@@ -147,8 +161,8 @@ class AppTesting(UniDefault):
         """
         if debug: set_logging_dev()
         else: set_logging_production()
-        init()
         ApplicationConfig.from_json(config_path)
+        init()
 
         logger.info(color_green(f"Running tests for {test_name}"))
         return ApplicationConfig.config
@@ -168,9 +182,12 @@ class AppTesting(UniDefault):
         if debug: set_logging_dev()
         else: set_logging_production()
         app = UniBackend(config=cfg)
+        r = cls(app)
 
-        logger.info(color_green(f"Running API tests for {test_name}"))
-        return cls(app)
+        print("\n\n")
+        logger.info(color_magenta(f"Running API tests for {test_name}"))
+        
+        return r
 
 
 if __name__ == '__main__':

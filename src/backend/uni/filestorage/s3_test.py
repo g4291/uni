@@ -16,7 +16,11 @@ logger = core_logger().getChild("filestorage")
 
 
 if __name__ == '__main__': 
-    AppTesting.basic("s3 storage")
+    cfg = AppTesting.basic("s3 storage")
+    
+    if cfg.aws_key == "":
+        logger.info("AWS credentials not configured, skipping tests")
+        exit()
 
     fs = UniS3Storage()
     test_content = "This is a test file.".encode("utf-8")

@@ -26,14 +26,14 @@ def disable_uvicorn_logger() -> None:
     disable_logger("uvicorn.error")
     disable_logger("uvicorn.access")
     
-def set_logging_dev() -> None:
+def set_logging_dev(debug: bool = True) -> None:
     """ Set debug logging """
     _format = color_cyan('[%(asctime)s]\t[%(levelname)s]\t[%(name)s]\t[%(pathname)s:%(lineno)s]:')
     
     _end = color_cyan("----------------------------------------------------------------------")
     logging.basicConfig(
         format=_format + "\n\t%(message)s\n" + _end,
-        level=logging.DEBUG
+        level=logging.DEBUG if debug else logging.INFO
     )
 
 def set_logging_production() -> None:
@@ -76,6 +76,9 @@ def color_cyan(input: str) -> str:
 
 def color_grey(input: str) -> str:
     return colorama.Fore.LIGHTBLACK_EX + input + colorama.Style.RESET_ALL
+
+def color_magenta(input: str) -> str:  
+    return colorama.Fore.MAGENTA + input + colorama.Style.RESET_ALL
 
 # Create a type variable that can be any type of Callable
 F = TypeVar('F', bound=Callable[..., Any])

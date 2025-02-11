@@ -2,6 +2,9 @@
 set -e
 trap 'echo "tests failed"; exit 1' ERR
 
+# remove test.db
+rm ./test.db
+
 # uni.cache
 python3 -m uni.cache.dbcache_test
 

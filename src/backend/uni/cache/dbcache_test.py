@@ -6,7 +6,6 @@ uni.cache.dbcache_test
 module test
 """
 
-import uuid
 from pydantic import BaseModel
 
 from uni.database import database_factory
