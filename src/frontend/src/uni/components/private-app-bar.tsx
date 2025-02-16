@@ -108,13 +108,11 @@ export default function UniPrivateAppBar(props: IPrivateAppBarProps): JSX.Elemen
                         {
                             props.langSelector && <>
                             <UniToggleLang small />
-                            <UniDivider.V />
                             </>
                         }
                         {
                             props.themeSelector && <>
                             <UniToggleThemeMode small />
-                            <UniDivider.V />
                             </>
 
                         }
