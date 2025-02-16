@@ -6,6 +6,7 @@ uni.modules.user.model
 
 from __future__ import annotations
 import base64
+import io
 import os
 from typing import BinaryIO, Optional
 import uuid
@@ -119,8 +120,15 @@ class UniB64EncodedFile(BaseModel):
     def extension(self) -> str:
         return os.path.splitext(self.filename)[1]
     
-    def decode_str(self) -> bytes:
+    def decode_str(self) -> str:
         return base64.b64decode(self.data.split(",")[1]).decode("utf-8")
+    
+    def b64_data(self) -> str:
+        return self.data.split(",")[1]
+    
+    def as_stream(self) -> io.BytesIO:
+        data = base64.b64decode(self.data.split(",")[1])
+        return io.BytesIO(data)
 
 
 if __name__ == "__main__": exit()

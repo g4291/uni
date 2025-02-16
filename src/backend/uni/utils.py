@@ -162,11 +162,12 @@ def decode_base64_file(data: str, filename: str) -> bool:
         return ServerError(f"unable to decode base64 data")
     
 @log_call(logger)
-def shell(command) -> None:
+def shell(command) -> str:
     """runs shell command"""
     logger.info(f"shell: running command: {command}")
     r = subprocess.check_output("%s" % command, shell=True, text=True)
     logger.info(f"shell: command output: {r}")
+    return r
     
 @log_call(logger)
 def zip_dir(filename: str, dir: str, format: str = "zip") ->  str:
@@ -401,6 +402,24 @@ def crawl_directory(directory: str, extensions: Optional[List[str]] = None) -> L
                 result.append((file, abs_path))
     
     return result
+
+def is_path_within_current_directory(path):
+    """
+    Check if a given path is within the current directory.
+    Args:
+        path (str): The path to check.
+    Returns:
+        bool: True if the path is within the current directory, False otherwise.
+    """
+    # Get the absolute path of the current directory
+    current_directory = os.path.abspath(os.getcwd())
+
+    # Resolve the absolute path of the given path
+    target_path = os.path.abspath(path)
+
+    # Compare the common path of both paths with the current directory
+    return os.path.commonpath([current_directory]) == os.path.commonpath([current_directory, target_path])
+
 
 
 if __name__ == '__main__': 

@@ -87,7 +87,7 @@ class BackgroundTask():
             if _p >= 100:
                 _p = 99
             elif _p < 0:
-                _p = 0
+                _p = -1
             self._progress = _p
         except Exception:
             pass

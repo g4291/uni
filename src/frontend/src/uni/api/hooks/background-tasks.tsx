@@ -9,9 +9,7 @@ import { UniApiContext } from '../api';
  * @returns {[IUniBackgroundTaskInfo[], () => void]} An array containing the list of background tasks and a function to reload the tasks.
  */
 export function useUniBackgroundTasks(): [IUniBackgroundTaskInfo[], () => void] {
-
     const ctx = React.useContext(UniApiContext)
-
     return [ctx.backgroundTasks.data, ctx.backgroundTasks.reload]
 }
 

@@ -3,7 +3,7 @@
 from .utils import id_factory
 
 
-VERSION = "1.2.0"
+VERSION = "1.2.1"
 API_PREFIX = "/api/v1"
 
 RUN_ID = str(id_factory())

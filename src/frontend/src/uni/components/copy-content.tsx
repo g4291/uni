@@ -26,13 +26,15 @@ interface IUniCopyContentButtonProps {
  * @returns {JSX.Element} The rendered component.
  */
 export default function UniCopyContentButton(props: IUniCopyContentButtonProps): JSX.Element {
-
     const t = useUniTranslator()
-    return <UniTooltip title={t("copy")} arrow>
+
+    const blocked = navigator.clipboard === undefined
+
+    return <UniTooltip title={blocked? t("blocked by browser") : t("copy")} arrow>
         <div style={{width: "fit-content"}}>
             <UniStack.Row spacing={1} sx={{alignItems: "center"}}>
                 {props.title}
-                <UniButton small plain onClick={(e) => {
+                <UniButton disabled={blocked} small plain onClick={(e) => {
                     copyToClipboard(props.content)
                 }}><UniIcons.Copy /></UniButton>
 
