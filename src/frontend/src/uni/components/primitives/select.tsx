@@ -113,6 +113,94 @@ export function UniSelect(props: IUniInputProps): JSX.Element {
     return inputElement
 }
 
+// props
+export interface IUniMultiSelectProps extends IUniWithChildrenProps, IUniWithSXProps, IUniWithVariantProps, IUniWithSizeProps, IUniWithColorProps, IUniWithDecoratorsProps {
+    formControlSx?: SxProps
+
+    placeholder?: string
+    helperText?: React.ReactNode
+    label?: React.ReactNode
+
+    name?: string
+
+
+    // control
+    value?: string[]
+    onChange?: (value: string[]) => any
+    disabled?: boolean
+    fullWidth?: boolean
+}
+
+/**
+ * Base UniInput component
+ * 
+ * @param props IBaseUniSwitch
+ * @returns JSX.Element
+ */
+export function UniMultiSelect(props: IUniMultiSelectProps): JSX.Element {
+    const size = props.small ? "sm" : props.large ? "lg" : undefined
+    const variant = React.useMemo(() => getUniVariant(props, UNI_INPUT_CONFIG.defaultVariant), [props])
+    const _color = React.useMemo(() => getUniColor(props, UNI_INPUT_CONFIG.defaultColor), [props])
+
+    // controling
+    const [value, setValue] = React.useState<string[]>([])
+    const controlled = props.value !== undefined
+    const _value = controlled ? props.value : value
+
+    useEffect(() => {
+        if (props.value !== undefined) setValue(props.value)
+    }, [props.value])
+
+    const _sx: any = { ...UNI_INPUT_CONFIG.defaultSx }
+    const _formControlSx: any = { ...UNI_INPUT_CONFIG.defaultFormControlSx }
+    if (props.fullWidth) {
+        _sx.width = "100%"
+        _formControlSx.width = "100%"
+    }
+
+
+    const inputElement = (
+        <Select
+            name={props.name}
+            disabled={props.disabled}
+            placeholder={props.placeholder}
+            value={_value}
+            variant={variant}
+            size={size}
+            color={_color}
+            sx={{ m: UNI_INPUT_CONFIG.defaultMargin, ..._sx, ...props.sx } as SxProps}
+            multiple
+            onChange={
+                (e, v) => {
+                    if (!controlled) setValue(v || [])
+                    if (props.onChange) props.onChange(v)
+                }
+            }
+            startDecorator={props.startDecorator}
+            endDecorator={props.endDecorator}
+        >{props.children}</Select>
+    )
+
+    if (props.label !== undefined || props.helperText !== undefined) {
+        return (
+            <FormControl
+                orientation="horizontal"
+                sx={{ ..._formControlSx, ...props.formControlSx } as SxProps}
+            >
+                <UniBox.Box fullWidth={props.fullWidth}>
+                    {props.label && <FormLabel sx={{ pb: 1 }}>{props.label}</FormLabel>}
+                    {inputElement}
+                    {
+                        props.helperText !== undefined && <FormHelperText><UT.Text xs>{props.helperText}</UT.Text></FormHelperText>
+                    }
+                </UniBox.Box>
+            </FormControl>
+        )
+    }
+
+    return inputElement
+}
+
 export const UniSelectOption = Option;
 
 
