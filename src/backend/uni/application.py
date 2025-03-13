@@ -70,6 +70,8 @@ class UniBackend(UniDefault):
         Returns:
             UniBackend: The singleton instance of the UniBackend class.
         """
+        if len(UniBackend.__instance_cache) == 0:
+            raise Exception("UniBackend instance not initialized")
         return UniBackend.__instance_cache[0]
 
     def __init__(self, config: Config) -> None:

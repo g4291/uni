@@ -158,7 +158,9 @@ from .modules.notification.model import (
     Notification,
     db_Notification
 )
-from . import utils
+from . import utils    
+
+from .kvstore_utils import kvstore_get, kvstore_set
 
 __all__ = [
     "VERSION",
@@ -263,5 +265,7 @@ __all__ = [
     "db_User",
     "Notification",
     "db_Notification",
-    "utils"
+    "utils",
+    "kvstore_get",
+    "kvstore_set"
 ]

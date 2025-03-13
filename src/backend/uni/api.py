@@ -35,10 +35,13 @@ def get_api_handler(endpoint: str, private: bool = False, raises: bool = False) 
     """
     app = UniBackend.get_instance()
     handler = app.internal_get_handler(endpoint)
-    rq = get_current_request()
 
     if not handler:
         raise NotFoundError(f"Handler not found")
+    
+    rq = get_current_request()
+    if not rq:
+        raise ServerError("No request context found")
 
     def wrapper(*args, **kwargs) -> Any:
         if private:
