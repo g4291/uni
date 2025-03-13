@@ -65,6 +65,7 @@ function UniApiProvider(props: IUniApiProviderProps) {
     }
 
     const reloadBackgroundTasks = () => {
+        if (!user?.root) return
         if(token) {
             // const processId = processTracker.startProcess()
             UniApiUtils.post(serverUrl+"/background_tasks/get_all", {}, token).then(
@@ -105,7 +106,7 @@ function UniApiProvider(props: IUniApiProviderProps) {
 
     React.useEffect(() => {
         reloadUser()
-        reloadBackgroundTasks()
+        if (token) reloadBackgroundTasks()
 
         // eslint-disable-next-line
     }, [token])

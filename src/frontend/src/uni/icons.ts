@@ -54,7 +54,8 @@ import {
     AutoAwesome,
     FolderZip,
     TextSnippet,
-    LocalOffer
+    LocalOffer,
+    Groups
 } from "@mui/icons-material";
 
 export const UniIcons = {
@@ -113,7 +114,8 @@ export const UniIcons = {
     AI: AutoAwesome,
     Archive: FolderZip,
     Text: TextSnippet,
-    Tag: LocalOffer
+    Tag: LocalOffer,
+    Groups: Groups
 }
 
 export default UniIcons
