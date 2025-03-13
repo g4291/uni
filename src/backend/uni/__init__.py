@@ -144,7 +144,8 @@ from .application import UniBackend
 from .api import get_api_handler
 from .modules.file.model import (
     File,
-    db_File
+    db_File,
+    UniUploadFile
 )
 from .modules.file.handler import (
     PrivateFileHandler,
@@ -255,6 +256,7 @@ __all__ = [
     "get_api_handler",
     "File",
     "db_File",
+    "UniUploadFile",
     "PrivateFileHandler",
     "PublicFileHandler",
     "User",

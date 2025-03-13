@@ -302,7 +302,7 @@ def downscale_pil_image(image: Image.Image, max_pixels: int) -> Image.Image:
     
     return resized_img
 
-def rich_print(model: BaseModel) -> None:
+def rich_print(model: BaseModel, desc: bool = True) -> None:
     """
     Prints a detailed table representation of a Pydantic BaseModel using the rich library.
     Args:
@@ -314,7 +314,8 @@ def rich_print(model: BaseModel) -> None:
     table = Table(title=model.__class__.__name__)
     table.add_column("Field")
     table.add_column("Value")
-    table.add_column("Description")
+    if desc:
+        table.add_column("Description")
     
     def add_fields(model: BaseModel, prefix=""):
         # Instead of using schema(), we'll use __fields__ directly
@@ -324,36 +325,37 @@ def rich_print(model: BaseModel) -> None:
             
             if isinstance(value, BaseModel):
                 # Add parent field
-                table.add_row(
-                    f"{prefix} {field_name}",
-                    f"[cyan]{value.__class__.__name__}[/cyan]",
-                    description
-                )
+                f = f"{prefix} {field_name}"
+                v = f"[cyan]{value.__class__.__name__}[/cyan]"
+                if desc:
+                    table.add_row(f, v, description)
+                else:
+                    table.add_row(f, v)
                 # Recursively add nested fields
                 add_fields(value, prefix=f"{prefix}  ")
             elif isinstance(value, (list, tuple)):
                 if value and isinstance(value[0], BaseModel):
                     # Handle list of BaseModels
-                    table.add_row(
-                        f"{prefix}, {field_name}",
-                        f"List[{value[0].__class__.__name__}] (length: {len(value)})",
-                        description
-                    )
+                    f = f"{prefix}, {field_name}"
+                    v = f"List[{value[0].__class__.__name__}] (length: {len(value)})"
+                    table.add_row(f, v, description)
                     for i, item in enumerate(value):
                         add_fields(item, prefix=f"{prefix}  {i}: ")
                 else:
                     # Handle regular lists
-                    table.add_row(
-                        f"{prefix} {field_name}",
-                        str(value),
-                        description
-                    )
+                    f = f"{prefix} {field_name}"
+                    v = str(value)
+                    if desc:
+                        table.add_row(f, v, description)
+                    else:
+                        table.add_row(f, v)
             elif value is None:
-                table.add_row(
-                    f"{prefix} {field_name}",
-                    "[italic]None[/italic]",
-                    description
-                )
+                f = f"{prefix} {field_name}"
+                v = "[italic]None[/italic]"
+                if desc:
+                    table.add_row(f, v, description)
+                else:
+                    table.add_row(f, v)
             else:
                 # Handle regular fields
                 try:
@@ -361,11 +363,11 @@ def rich_print(model: BaseModel) -> None:
                 except Exception:
                     value_str = "[red]<unprintable>[/red]"
                 
-                table.add_row(
-                    f"{prefix} {field_name}",
-                    value_str,
-                    description
-                )
+                f = f"{prefix} {field_name}"
+                if desc:
+                    table.add_row(f, value_str, description)
+                else:
+                    table.add_row(f, value_str)
     
     try:
         add_fields(model)

@@ -7,6 +7,7 @@ User commands
 from __future__ import annotations
 import argparse
 import getpass
+import json
 
 from uni.events.crud import EventPostCreate, EventPostDelete
 
@@ -104,15 +105,72 @@ def __cmd_show(email: str) -> int:
     rich_print(user)
     return 0
 
+def __cmd_permissions(email: str, permissions_file: str, root: bool) -> int:
+    """
+    Set user permissions based on the provided email.
+    Args:
+        email (str): The email address of the user to set permissions for.
+    Returns:
+        int: Returns 0 if the user is found and permissions are set, otherwise returns 1 if the user is not found.
+    """
+
+    user = database_factory().find({}, db_User).filter(["email", "==", email]).fetch_one()
+    if not user:
+        logger.error(f"User {email} not found")
+        return 1
+    
+    # load permissions file (JSON array)
+    if permissions_file != "-":
+        logger.info(f"Loading permissions from file {permissions_file}")
+        try:
+            with open(permissions_file, "r") as f:
+                permissions = json.load(f)
+                logger.info(f"Permissions: \n{"\n".join(permissions)}")
+        except Exception as e:
+            logger.error(f"Error loading permissions file {permissions_file} \n{e}")
+            return 1
+        user.user_permissions = permissions
+    
+    else:
+        logger.info(f"Setting root status for user {email}, root: {root}")
+        user.root = root
+
+    r = database_factory().update(user)
+    if not r:
+        logger.error(f"Error setting permissions for user {email}")
+        return 1  
+
+    return 0   
+
+def __cmd_all(permissions_file: str, root: bool) -> int:
+    """
+    Set permissions for all users.
+    Args:
+        permissions_file (str): The path to the permissions file.
+        root (bool): Whether the user is a root user.
+    Returns:
+        int: Returns 0 if the permissions are set for all users, otherwise returns 1 if there is an error.
+    """
+
+    users = database_factory().find({}, db_User).fetch()
+
+    for u in users:
+        email = u.email
+        r = __cmd_permissions(email, permissions_file, root) 
+        if r: return r
+
 
 def __main() -> int:
     parser = argparse.ArgumentParser(description='User commands')   
     parser.add_argument("--cfg", default="config.json", help="Path to configuration file, default is config.json")
-    parser.add_argument("--email", help="Email address of the user", required=True)
+    parser.add_argument("--email", help="Email address of the user", default="")
     parser.add_argument("--add", action="store_true", help="Add user")
     parser.add_argument("--delete", action="store_true", help="Delete user")
     parser.add_argument("--root", action="store_true", help="User is root")    
     parser.add_argument("--show", action="store_true", help="Show user")
+
+    parser.add_argument("--all", action="store_true", help="Set for all users")
+    parser.add_argument("--permissions", default="", help="Path to permissions file or - if you want to change root status")
     args = parser.parse_args()
 
     # load configuration
@@ -122,11 +180,32 @@ def __main() -> int:
 
     # handle commands
     if args.add:
+        if args.email == "":
+            logger.error("Email address is required")
+            return 1
         return __cmd_add(args.email, args.root)
+    
     elif args.delete:
+        if args.email == "":
+            logger.error("Email address is required")
+            return
         return __cmd_delete(args.email)
+    
     elif args.show:
+        if args.email == "":
+            logger.error("Email address is required")
+            return 1
         return __cmd_show(args.email)
+    
+    elif args.permissions != "":
+        if args.all:
+            return __cmd_all(args.permissions, args.root)
+        
+        if args.email == "":
+            logger.error("Email address is required, or use --all to set for all users")
+            return 1
+        return __cmd_permissions(args.email, args.permissions, args.root)
+
 
     # print help
     parser.print_help()

@@ -74,8 +74,9 @@ class Handler(UniWithRequest):
                 yield StreamChunk(error=err, data=None).json()
 
             except Exception as e:
+                logger.error(f"stream_response error: {e}")
                 err = StreamError(
-                    status_code==500,
+                    status=500,
                     text="Internal Server Error",
                     detail=str(e)
                 )
