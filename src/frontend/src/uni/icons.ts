@@ -55,7 +55,8 @@ import {
     FolderZip,
     TextSnippet,
     LocalOffer,
-    Groups
+    Groups,
+    Remove,
 } from "@mui/icons-material";
 
 export const UniIcons = {
@@ -115,7 +116,8 @@ export const UniIcons = {
     Archive: FolderZip,
     Text: TextSnippet,
     Tag: LocalOffer,
-    Groups: Groups
+    Groups: Groups,
+    Remove: Remove
 }
 
 export default UniIcons

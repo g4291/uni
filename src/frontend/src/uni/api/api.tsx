@@ -153,11 +153,16 @@ function UniApiProvider(props: IUniApiProviderProps) {
 
 }
 
+export function useUniToken() {
+    return React.useContext(UniApiContext).token.get()
+}
+
 // export module
 export const UniApi = {
     config: UNI_API_CONFIG,
     ctx: UniApiContext,
     Provider: UniApiProvider,
+    useToken: useUniToken
 }
 
 

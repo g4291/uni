@@ -9,12 +9,17 @@ interface IError {
     text?: string;
 }
 
-const uniEndpoints = {
+export const uniEndpoints = {
     auth: "/auth",
     googleOAuth: "/google_oauth",
     authWithRoot: "/auth_with_root",
     user: {
         get_self: "/user/get_self",
+    },
+    kvStore: {
+        get: "/kvstore/get",
+        set: "/kvstore/set",
+        delete: "/kvstore/delete"
     }
 }
 

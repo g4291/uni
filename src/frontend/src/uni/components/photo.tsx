@@ -4,7 +4,6 @@ import UniFade from "./animations/fade";
 import UniBox from "./primitives/box";
 import { UniTypography as UT } from "./primitives/typography";
 import { useUniTranslator } from "../translator";
-import useUniTouaster from "../hooks/toaster";
 import { SERVER_URL } from "../../data/config";
 import { UniFile } from "../datamodel";
 import UniCard from "./primitives/card";
@@ -46,7 +45,6 @@ export interface IUniSimplePhotoProps {
  */
 export function UniSimplePhoto(props: IUniSimplePhotoProps): JSX.Element {
     const t = useUniTranslator()
-    const toast = useUniTouaster()
     const [open, setOpen] = React.useState(false)
     const [loaded, setLoaded] = React.useState(false)
 
@@ -200,6 +198,8 @@ export function UniPhotoCard(props: IUniPhotoCardProps): JSX.Element {
         img.onload = () => {
             setResolution({ width: img.width, height: img.height });
         };
+
+        // eslint-disable-next-line
     }, []);
 
     if (!photo) {

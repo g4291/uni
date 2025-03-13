@@ -16,6 +16,7 @@ import UniTooltip from "./primitives/tooltip";
 import UniDivider from "./primitives/divider";
 import { UniDatabaseModel } from "../datamodel";
 import { datetimeStrFromTimestamp } from "../../utils";
+import UniCopyContentButton from "./copy-content";
 
 
 export const UNI_DATA_GRID_CONFIG = {
@@ -42,14 +43,15 @@ export interface IUniDataGridProps<T> {
     height: string
     rowHeight?: number
     loading: boolean
-    page: number
-    pageSize: number
+    page?: number
+    pageSize?: number
     size: number
-    onPageChange: (page: number) => any
+    onPageChange?: (page: number) => any
     onRowClick?: (row: T, ctrl: boolean, shift: boolean) => any
     header?: React.ReactNode
-    onPageSizeChange: (pageSize: number) => any
+    onPageSizeChange?: (pageSize: number) => any
     onSortChange?: (sortKey: string, dir: UniDataGridSortDir) => any
+    disablePagination?: boolean
 }
 /**
  * UniDataGrid is a generic data grid component that displays tabular data with pagination, sorting, and customizable columns.
@@ -77,13 +79,17 @@ export default function UniDataGrid<T>(props: IUniDataGridProps<T>): JSX.Element
 
     const t = useUniTranslator()
     const bp = useUniBreakPoint()
+    const boxRef = React.useRef<HTMLDivElement>(null)
+
+    const page = props.page || 1
+    const pageSize = props.pageSize || UNI_DATA_GRID_CONFIG.defaultPageSize
 
     const hasMore = React.useMemo(() => {
-        return props.size > props.page * props.pageSize
-    }, [props.size, props.page, props.pageSize])
+        return props.size > page * pageSize
+    }, [props.size, page, pageSize])
 
-    const pages = React.useMemo(() => Math.ceil(props.size / props.pageSize),
-        [props.size, props.pageSize])
+    const pages = React.useMemo(() => Math.ceil(props.size / pageSize),
+        [props.size, pageSize])
 
 
     const tableBody = React.useMemo(() => {
@@ -104,7 +110,7 @@ export default function UniDataGrid<T>(props: IUniDataGridProps<T>): JSX.Element
                         return <tr key={ridx} style={{ height: props.rowHeight }} >
                             {
                                 props.cols.map((col, cidx) => {
-                                    return <td key={cidx} style={{ cursor: (props.onRowClick && !col.preventClickEvent) ? "pointer" : "auto" }} onClick={(e) => {
+                                    return <td key={ridx + "_" + cidx} style={{ cursor: (props.onRowClick && !col.preventClickEvent) ? "pointer" : "auto" }} onClick={(e) => {
                                         if (props.onRowClick && !col.preventClickEvent) {
                                             props.onRowClick(row, e.ctrlKey, e.shiftKey)
                                         }
@@ -120,13 +126,26 @@ export default function UniDataGrid<T>(props: IUniDataGridProps<T>): JSX.Element
         // eslint-disable-next-line
     }, [props.data, props.cols, props.rowHeight])
 
+
+    const handleScroll = () => {
+        // Scroll the container to a specific position
+        if (boxRef.current) {
+            boxRef.current.scroll({
+                top: 0,
+                behavior: 'smooth'
+            })
+        }
+    }
+
     return <>
         <UniCard
             outlined
             header={
-                <UniBox.Box fullWidth sx={{ p: 1 }}>
+
+                props.header && <UniBox.Box fullWidth sx={{ p: 1 }}>
                     {props.header}
                 </UniBox.Box>
+
             }
             fullWidth
             contentSx={{ p: 0, m: 0 }}
@@ -139,36 +158,71 @@ export default function UniDataGrid<T>(props: IUniDataGridProps<T>): JSX.Element
                                 <UniProgress.Circular
                                     size="sm"
                                     color="warning"
-                                /></UniFade>
+                                />
+                            </UniFade>
                         </UniBox.VHC>
                         {
-                            bp !== "xs" && <UniBox.VHC sx={{ p: 1 }}>
+                            !props.disablePagination && bp !== "xs" && <UniBox.VHC sx={{ p: 1 }}>
                                 <UT.Text xs>{t("page size")}</UT.Text>
                             </UniBox.VHC>
                         }
-                        <UniSelect
-                            small
-                            sx={{ width: "60px" }}
-                            value={props.pageSize}
-                            onChange={(v: string) => {
-                                props.onPageSizeChange(Number.parseInt(v))
-                            }}
-                        >
-                            {
-                                UNI_DATA_GRID_CONFIG.pageSizes.map((size, idx) => <UniSelectOption key={idx} value={size}>{size}</UniSelectOption>)
-                            }
-                        </UniSelect>
-                        <UniBox.VHC sx={{ p: 1 }}><UT.Text xs>{t("total")}: {props.size}</UT.Text></UniBox.VHC>
-                        <UniButton small plain onClick={() => { props.onPageChange(1) }} disabled={props.page === 1}><UniIcons.LeftDouble /></UniButton>
-                        <UniButton small plain onClick={() => { props.onPageChange(props.page - 1) }} disabled={props.page === 1}><UniIcons.Left /></UniButton>
-                        <UniBox.VHC sx={{ width: bp !== "xs" ? "100px" : "50px" }}><UT.Text xs sx={{ textAlign: "center" }}>{bp !== "xs" && t("page")} {props.page} / {pages}</UT.Text></UniBox.VHC>
-                        <UniButton small plain onClick={() => { props.onPageChange(props.page + 1) }} disabled={!hasMore}><UniIcons.Right /></UniButton>
-                        <UniButton small plain onClick={() => { props.onPageChange(pages) }} disabled={!hasMore}><UniIcons.RightDouble /></UniButton>
+                        {
+                            !props.disablePagination
+                            && <UniSelect
+                                small
+                                sx={{ width: "60px" }}
+                                value={pageSize}
+                                onChange={(v: string) => {
+                                    props.onPageSizeChange && props.onPageSizeChange(Number.parseInt(v))
+                                }}
+                            >
+                                {
+                                    UNI_DATA_GRID_CONFIG.pageSizes.map((size, idx) => <UniSelectOption key={idx} value={size}>{size}</UniSelectOption>)
+                                }
+                            </UniSelect>
+                        }
+                        <UniBox.VHC sx={{ p: 1 }}>
+                            <UT.Text xs>{t("total")}: {props.size}</UT.Text>
+                        </UniBox.VHC>
+                        {
+                            !props.disablePagination
+                            && <>
+                                <UniButton small plain onClick={() => {
+                                    props.onPageChange && props.onPageChange(1)
+                                    handleScroll()
+                                }} disabled={page === 1}>
+                                    <UniIcons.LeftDouble />
+                                </UniButton>
+                                <UniButton small plain onClick={() => {
+                                    props.onPageChange && props.onPageChange(page - 1)
+                                    handleScroll()
+                                }} disabled={page === 1}>
+                                    <UniIcons.Left />
+                                </UniButton>
+                                <UniBox.VHC sx={{ width: bp !== "xs" ? "100px" : "50px" }}>
+                                    <UT.Text xs sx={{ textAlign: "center" }}>
+                                        {bp !== "xs" && t("page")} {page} / {pages}
+                                    </UT.Text>
+                                </UniBox.VHC>
+                                <UniButton small plain onClick={() => {
+                                    props.onPageChange && props.onPageChange(page + 1)
+                                    handleScroll()
+                                }} disabled={!hasMore}>
+                                    <UniIcons.Right />
+                                </UniButton>
+                                <UniButton small plain onClick={() => {
+                                    props.onPageChange && props.onPageChange(pages)
+                                    handleScroll()
+                                }} disabled={!hasMore}>
+                                    <UniIcons.RightDouble />
+                                </UniButton>
+                            </>
+                        }
                     </UniStack.Row>
                 </UniBox.HR>
             }
         >
-            <UniBox.Box fullWidth sx={{ overflow: "auto", height: props.height, m: 0, p: 0, scrollbarWidth: "thin" }}>
+            <UniBox.Box ref={boxRef} fullWidth sx={{ overflow: "auto", height: props.height, m: 0, p: 0, scrollbarWidth: "thin" }}>
                 <Table sx={{ m: 0 }} stickyHeader hoverRow>
                     <thead>
                         <tr>
@@ -228,6 +282,17 @@ export default function UniDataGrid<T>(props: IUniDataGridProps<T>): JSX.Element
             </UniBox.Box>
         </UniCard>
     </>
+}
+
+export function uniGridColumnId<T extends UniDatabaseModel>(xs?: boolean): UniDataGridColDef<T> {
+    return {
+        name: "ID",
+        width: 400,
+        renderCell: (e) => {
+            return <UniCopyContentButton content={e.id} title={<UT.Text>{e.id}</UT.Text>} />
+        },
+        preventClickEvent: true
+    }
 }
 
 export function uniGridColumnNo<T extends UniDatabaseModel>(xs?: boolean): UniDataGridColDef<T> {

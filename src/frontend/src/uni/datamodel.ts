@@ -1,3 +1,4 @@
+import { IUniDatabaseModel } from "./api/common"
 import { getId } from "./utils"
 
 interface UniModelMeta {
@@ -94,4 +95,9 @@ export interface UniCreateUserModel {
     id: string
     email: string
     password: string
+}
+
+export interface IKVStoreEntity<T> extends IUniDatabaseModel {
+    key: string
+    value: T | null
 }
